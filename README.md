@@ -69,6 +69,8 @@
 
 `docker compose up` - запустит три сервиса
 1. nginx, раздающий клиентскую статику (client)
+
+test
 2. node, ваш сервер (server)
 3. postgres, вашу базу данных (postgres)
 
