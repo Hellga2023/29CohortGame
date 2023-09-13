@@ -4,7 +4,8 @@ import FighterImage from '@/assets/images/game/ships/Fighter.png';
 import FrigateImage from '@/assets/images/game/ships/Frigate.png';
 import RocketImage from '@/assets/images/game/shots/Rocket.png';
 import PlayerRocketImage from '@/assets/images/game/shots/PlayerRocket.png';
-import { DrawableObjectParams, ShipType, ShotType } from '../types/commonTypes';
+import { ShipType, ShotType } from '../types/common';
+import { BaseObjectParams } from '../core/baseObject';
 
 /* Shots parameters */
 
@@ -14,14 +15,14 @@ const shotParams = {
     imageSpriteWidth: 36,
 };
 
-export const ShotParametersValues: Record<ShotType, DrawableObjectParams> = {
-    [ShotType.Enemy]: new DrawableObjectParams(
+export const ShotParametersValues: Record<ShotType, BaseObjectParams> = {
+    [ShotType.Enemy]: new BaseObjectParams(
         shotParams.width,
         shotParams.height,
         RocketImage,
         shotParams.imageSpriteWidth
     ),
-    [ShotType.Player]: new DrawableObjectParams(
+    [ShotType.Player]: new BaseObjectParams(
         shotParams.width,
         shotParams.height,
         PlayerRocketImage,
@@ -33,14 +34,9 @@ export const ShotParametersValues: Record<ShotType, DrawableObjectParams> = {
 
 const imageSpriteWidth = 959;
 
-export const ShipTypesParameterValues: Record<ShipType, DrawableObjectParams> = {
-    [ShipType.Battlecruiser]: new DrawableObjectParams(
-        128,
-        128,
-        BattlecruiserImage,
-        imageSpriteWidth
-    ),
-    [ShipType.Fighter]: new DrawableObjectParams(64, 64, FighterImage, imageSpriteWidth),
-    [ShipType.Bomber]: new DrawableObjectParams(64, 64, BomberImage, imageSpriteWidth),
-    [ShipType.Player]: new DrawableObjectParams(64, 64, FrigateImage, 1024),
+export const ShipTypesParameterValues: Record<ShipType, BaseObjectParams> = {
+    [ShipType.Battlecruiser]: new BaseObjectParams(128, 128, BattlecruiserImage, imageSpriteWidth),
+    [ShipType.Fighter]: new BaseObjectParams(64, 64, FighterImage, imageSpriteWidth),
+    [ShipType.Bomber]: new BaseObjectParams(64, 64, BomberImage, imageSpriteWidth),
+    [ShipType.Player]: new BaseObjectParams(64, 64, FrigateImage, 1024),
 } as const;

@@ -1,4 +1,4 @@
-import { TPoint } from '../types/commonTypes';
+import { TPoint } from '../types/common';
 
 type TAngles = {
     vectorAngle: number;

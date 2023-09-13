@@ -1,16 +1,16 @@
-import GamePainter from './gamePainter';
-import gameState from './store/gameState';
-import { GlobalGameState } from './types/objectState';
+import Painter from './painter';
+import gameState from '../store/gameState';
+import { GlobalGameState } from '../store/objectState';
 import { store } from '@/app/store/store';
 import { setGameState } from '@/app/store/slices/gameSlice';
-import { GameControlManager } from './gameControlManager';
-import CollisionManager from './collisionManager';
+import { ControlManager } from './controlModule';
+import CollisionModule from './collisionModule';
 
 class GameEngine {
     // eslint-disable-next-line no-use-before-define
     private static instance?: GameEngine;
 
-    private painter: GamePainter;
+    private painter: Painter;
 
     public mainLoopIndex = 0;
 
@@ -23,7 +23,7 @@ class GameEngine {
     private IMAGE_CHANGE_SPEED = 5; // 1 per 5 frames image changes
 
     private constructor(ctx: CanvasRenderingContext2D) {
-        this.painter = new GamePainter(ctx);
+        this.painter = new Painter(ctx);
     }
 
     public static getInstance = (ctx?: CanvasRenderingContext2D) => {
@@ -80,7 +80,7 @@ class GameEngine {
 
         /* detect if any ship is hit */
 
-        CollisionManager.collisionDetection();
+        CollisionModule.collisionDetection();
 
         /* game state logic */
 
@@ -176,7 +176,7 @@ class GameEngine {
     /* game control logic */
 
     public gameControlPressed = (event: KeyboardEvent) =>
-        GameControlManager.gameControlPressed(event, this.mainLoopIndex);
+        ControlManager.gameControlPressed(event, this.mainLoopIndex);
 
     public static isGameRunning = () => {
         const globalGameState = gameState.getState();

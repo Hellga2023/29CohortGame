@@ -1,5 +1,5 @@
 import TrajectoryHelper from '../helpers/trajectoryHelper';
-import { TPoint } from './commonTypes';
+import { TPoint } from '../types/common';
 
 class Trajectory {
     private points: TPoint[];

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { GlobalGameState } from '@/app/pages/game/gameEngine/types/objectState';
+import { GlobalGameState } from '@/app/pages/game/gameEngine/store/objectState';
 
 type TGameState = {
     gameState: GlobalGameState;

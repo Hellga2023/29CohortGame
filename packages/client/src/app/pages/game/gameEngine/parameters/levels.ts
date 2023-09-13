@@ -1,4 +1,4 @@
-import { ShipType, TEnemyType, TPoint } from '../types/commonTypes';
+import { ShipType, TEnemyType, TPoint } from '../types/common';
 
 export enum GameLevelList {
     Level1,

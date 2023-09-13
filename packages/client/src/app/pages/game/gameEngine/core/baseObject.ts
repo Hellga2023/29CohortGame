@@ -1,28 +1,8 @@
-import Trajectory from './trajectory';
-
-export type TPoint = {
-    x: number;
-    y: number;
-};
-
-export enum ShipType {
-    Battlecruiser,
-    Bomber,
-    Fighter,
-    Player,
-}
-
-export type TEnemyType = Exclude<ShipType, ShipType.Player>;
-
-export enum ShotType {
-    Enemy,
-    Player,
-}
-
-export const NEXT_SHIP_DELAY = 1 * 60; // frames per second??? todo to const
+import Trajectory from '../objects/trajectory';
+import { TPoint } from '../types/common';
 
 /* Common state for ships and shots */
-export class DrawableObjectState {
+export class BaseObjectState {
     private coordinates: TPoint;
 
     protected frameIndex = 0;
@@ -51,7 +31,7 @@ export class DrawableObjectState {
 }
 
 /* Common parameters type for ships and shots */
-export class DrawableObjectParams {
+export class BaseObjectParams {
     public width: number;
 
     public height: number;
@@ -70,24 +50,24 @@ export class DrawableObjectParams {
 
 /* Common object that can be drawn */
 
-export class DrawableGameObject {
+export class BaseGameObject {
     public image = new Image();
 
-    protected state: DrawableObjectState;
+    protected state: BaseObjectState;
 
-    protected parameters: DrawableObjectParams;
+    protected parameters: BaseObjectParams;
 
-    constructor(state: DrawableObjectState, parameters: DrawableObjectParams) {
+    constructor(state: BaseObjectState, parameters: BaseObjectParams) {
         this.state = state;
         this.parameters = parameters;
         this.image.src = parameters.image;
     }
 
-    public getState(): DrawableObjectState {
+    public getState(): BaseObjectState {
         return this.state;
     }
 
-    public getParameters(): DrawableObjectParams {
+    public getParameters(): BaseObjectParams {
         return this.parameters;
     }
 }

@@ -1,7 +1,7 @@
-import { DrawableGameObject } from './types/commonTypes';
-import params from './parameters/gameParameters';
+import params from '../parameters/globalParameters';
+import { BaseGameObject } from './baseObject';
 
-class GamePainter {
+class Painter {
     private context: CanvasRenderingContext2D;
 
     private bgImage = new Image();
@@ -35,7 +35,7 @@ class GamePainter {
         this.context.fillText('LEVEL FINISHED', 100, 200);
     };
 
-    public drawFrame = (object: DrawableGameObject) => {
+    public drawFrame = (object: BaseGameObject) => {
         const parameters = object.getParameters();
         const state = object.getState();
         const spriteX = parameters.width * state.getFrameIndex();
@@ -54,4 +54,4 @@ class GamePainter {
     };
 }
 
-export default GamePainter;
+export default Painter;

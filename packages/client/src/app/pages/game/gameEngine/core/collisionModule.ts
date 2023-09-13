@@ -1,9 +1,8 @@
-import { DrawableGameObject } from './types/commonTypes';
-import state from './store/gameState';
-import { LiveState } from './types/objectState';
+import state from '../store/gameState';
+import { BaseGameObject } from './baseObject';
 
-class CollisionManager {
-    private static detectCollision(object1: DrawableGameObject, object2: DrawableGameObject) {
+class CollisionModule {
+    private static detectCollision(object1: BaseGameObject, object2: BaseGameObject) {
         const point1 = object1.getState().getCoordinates();
         const params1 = object1.getParameters();
         const point2 = object2.getState().getCoordinates();
@@ -21,8 +20,8 @@ class CollisionManager {
 
         state.enemies.forEach(ship => {
             if (ship.shouldDetectCollision()) {
-                if (CollisionManager.detectCollision(player, ship)) {
-                    player.setLiveState(LiveState.Exploiding);
+                if (CollisionModule.detectCollision(player, ship)) {
+                    player.setIsHit();
                     console.log('player hit');
                 }
             }
@@ -34,9 +33,9 @@ class CollisionManager {
             if (shot.isPlayerShot() && shot.isVisible()) {
                 state.enemies.forEach(ship => {
                     if (ship.shouldDetectCollision()) {
-                        if (CollisionManager.detectCollision(shot, ship)) {
+                        if (CollisionModule.detectCollision(shot, ship)) {
                             console.log('ship hit');
-                            ship.setLiveState(LiveState.Exploiding);
+                            ship.setIsHit();
                         }
                     }
                 });
@@ -45,9 +44,9 @@ class CollisionManager {
     };
 
     public static collisionDetection = () => {
-        CollisionManager.detectPlayerHit();
-        CollisionManager.detectEnemyHit();
+        CollisionModule.detectPlayerHit();
+        CollisionModule.detectEnemyHit();
     };
 }
 
-export default CollisionManager;
+export default CollisionModule;

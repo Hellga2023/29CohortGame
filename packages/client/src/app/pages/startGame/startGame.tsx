@@ -2,8 +2,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import Progressbar from '@/app/components/common/progressbar/progressbar';
 import style from './startgame.module.scss';
-import { GlobalGameState } from '../game/gameEngine/types/objectState';
-import GameEngine from '../game/gameEngine/gameEngine';
+import { GlobalGameState } from '../game/gameEngine/store/objectState';
+import GameEngine from '../game/gameEngine/core/engine';
 
 const StartGame: FC = () => {
     const [value, setValue] = useState(0);

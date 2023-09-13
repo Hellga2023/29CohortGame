@@ -1,3 +1,8 @@
+/*  "@core/*": ["./src/components/common/*"],
+            "@objects/*": ["./src/components/common/*"],
+            "@parameters/*": ["./src/components/common/*"],
+            "@common/*": ["./src/components/common/*"] */
+
 {
     "compilerOptions": {
         "target": "ESNext",

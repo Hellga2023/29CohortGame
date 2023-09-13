@@ -1,5 +1,6 @@
-import { DrawableObjectState, TPoint } from './commonTypes';
-import Trajectory from './trajectory';
+import { TPoint } from '../types/common';
+import Trajectory from '../objects/trajectory';
+import { BaseObjectState } from '../core/baseObject';
 
 export enum GlobalGameState {
     Loaded,
@@ -20,7 +21,7 @@ export enum LiveState {
     Dead,
 }
 
-export class ShipState extends DrawableObjectState {
+export class ShipState extends BaseObjectState {
     private liveState: LiveState;
 
     constructor(coordinates: TPoint, trajectory: Trajectory, liveState: LiveState) {
@@ -67,7 +68,7 @@ export class ShipState extends DrawableObjectState {
     };
 }
 
-export class ShotState extends DrawableObjectState {
+export class ShotState extends BaseObjectState {
     private show: boolean;
 
     private startTime: number;
