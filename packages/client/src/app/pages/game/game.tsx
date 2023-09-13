@@ -25,24 +25,12 @@ const Game: FC = () => {
     };
 
     const pauseGame = () => {
-        if (paused) {
-            GameEngine.getInstance().setGameState(GlobalGameState.Resumed);
-            setIsPaused(false);
-        } else {
-            GameEngine.getInstance().setGameState(GlobalGameState.Paused);
-            setIsPaused(true);
-        }
+        const globalState = paused ? GlobalGameState.Resumed : GlobalGameState.Paused;
+        GameEngine.getInstance().setGameState(globalState);
+        setIsPaused(!paused);
     };
 
-    useEffect(() => {
-        if (state === GlobalGameState.LevelStarted || state === GlobalGameState.Resumed) {
-            window.addEventListener('keydown', onKeyDown);
-        }
-        return () => {
-            window.removeEventListener('keydown', onKeyDown);
-        };
-    }, [state]);
-
+    // todo context issue if instance is created without context
     useEffect(() => {
         const context = (ref.current as HTMLCanvasElement).getContext('2d');
         if (context) {
@@ -52,6 +40,15 @@ const Game: FC = () => {
             console.log('no context found');
         }
     }, []);
+
+    useEffect(() => {
+        if (GameEngine.isGameRunning()) {
+            window.addEventListener('keydown', onKeyDown);
+        }
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, [state]);
 
     if (state === GlobalGameState.Ended) {
         return <GameOver score={score} />;

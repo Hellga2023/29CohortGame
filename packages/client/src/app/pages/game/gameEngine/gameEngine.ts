@@ -1,38 +1,29 @@
-import GameAnimator from './gameAnimator';
-import params from './parameters/gameParameters';
+import GamePainter from './gamePainter';
 import gameState from './store/gameState';
-import { GameShot } from './types/gameTypes';
-import { ShotType } from './types/commonTypes';
 import { GlobalGameState } from './types/objectState';
 import { store } from '@/app/store/store';
 import { setGameState } from '@/app/store/slices/gameSlice';
-
-// todo move it in some control module ?
-const ControlKeys = {
-    LEFT: 'ArrowLeft',
-    UP: 'ArrowUp',
-    RIGHT: 'ArrowRight',
-    DOWN: 'ArrowDown',
-    PAUSE: 'Enter',
-    SHOOT: 'a',
-};
-
-export type TDirection = 'Up' | 'Down' | 'Left' | 'Right';
+import { GameControlManager } from './gameControlManager';
+import CollisionManager from './collisionManager';
 
 class GameEngine {
     // eslint-disable-next-line no-use-before-define
     private static instance?: GameEngine;
 
-    private context: CanvasRenderingContext2D;
+    private painter: GamePainter;
 
-    private bgImage = new Image();
+    public mainLoopIndex = 0;
 
-    private animator: GameAnimator;
+    private requestId = -1;
+
+    private isStopped = false;
+
+    private frameCount = 0;
+
+    private IMAGE_CHANGE_SPEED = 5; // 1 per 5 frames image changes
 
     private constructor(ctx: CanvasRenderingContext2D) {
-        this.context = ctx;
-        this.bgImage.src = params.BACKGROUND_IMAGE;
-        this.animator = new GameAnimator(this.context, this.renderGameField);
+        this.painter = new GamePainter(ctx);
     }
 
     public static getInstance = (ctx?: CanvasRenderingContext2D) => {
@@ -47,52 +38,106 @@ class GameEngine {
         throw new Error('no context provided for gameEngine');
     };
 
-    private renderGameField = () => {
-        this.context.clearRect(0, 0, params.WIDTH, params.HEIGHT);
-        this.context.drawImage(this.bgImage, 0, 0, params.WIDTH, params.HEIGHT);
+    private mainLoop = () => {
+        if (this.isStopped) {
+            window.cancelAnimationFrame(this.requestId);
+            return;
+        }
+
+        this.frameCount++;
+        const shouldChangeFrame = this.frameCount === this.IMAGE_CHANGE_SPEED;
+
+        /* update objects state and draw them */
+
+        const { player } = gameState;
+
+        this.painter.drawBackground();
+
+        if (!player.isDead()) {
+            player.updateState(shouldChangeFrame);
+            this.painter.drawFrame(player);
+        }
+
+        gameState.enemies.forEach(enemy => {
+            if (!enemy.isDead()) {
+                enemy.updateState(this.mainLoopIndex, shouldChangeFrame);
+                if (!enemy.isWaiting()) {
+                    this.painter.drawFrame(enemy);
+                }
+            }
+        });
+
+        gameState.shots.forEach(shot => {
+            if (shot.isVisible()) {
+                shot.updateState(this.mainLoopIndex, shouldChangeFrame);
+                this.painter.drawFrame(shot);
+            }
+        });
+
+        if (shouldChangeFrame) {
+            this.frameCount = 0;
+        }
+
+        /* detect if any ship is hit */
+
+        CollisionManager.collisionDetection();
+
+        /* game state logic */
+
+        if (player.isDead()) {
+            console.log('game ends');
+            this.isStopped = true;
+            window.cancelAnimationFrame(this.requestId);
+            this.setGameState(GlobalGameState.Ended);
+        }
+
+        if (this.mainLoopIndex === gameState.getLevelTime()) {
+            console.log('level ends');
+            this.isStopped = true;
+            window.cancelAnimationFrame(this.requestId);
+            this.setGameState(GlobalGameState.LevelEnded);
+        }
+
+        this.mainLoopIndex++; // do we need to replace this with time?
+
+        this.requestId = window.requestAnimationFrame(this.mainLoop);
     };
 
-    private load = () => {
-        this.bgImage.onload = () => {
-            this.renderGameField();
-            this.context.font = 'bold 48px serif';
-            this.context.fillStyle = '#fff';
-            this.context.fillText('START GAME', 140, 200);
-        };
+    /* main loop state methods */
+
+    private stop = () => {
+        this.isStopped = true;
+        window.cancelAnimationFrame(this.requestId);
     };
 
-    private levelEnd = () => {
-        this.renderGameField();
-        this.context.font = 'bold 48px serif';
-        this.context.fillStyle = '#fff';
-        this.context.fillText('LEVEL FINISHED', 100, 200);
+    private continue = () => {
+        console.log('in animator start');
+        this.isStopped = false;
+        this.requestId = window.requestAnimationFrame(this.mainLoop);
+    };
+
+    private reset = () => {
+        console.log('in animator reset');
+        this.stop();
+        this.frameCount = 0;
+        this.mainLoopIndex = 0;
+        this.requestId = -1;
     };
 
     private start = () => {
         gameState.startLevel();
-        this.animator.reset();
-        this.animator.start();
+        this.reset();
+        this.continue();
     };
 
-    private cancelAnimation = () => {
-        this.animator.stop();
+    private load = () => this.painter.drawLoadScreen();
+
+    private levelEnd = () => {
+        this.stop();
+        this.painter.drawLevelEnd();
     };
 
-    private pause = () => {
-        this.cancelAnimation();
-    };
-
-    private resume = () => {
-        this.animator.start();
-    };
-
-    private finish = () => {
-        this.cancelAnimation();
-        this.renderGameField();
-        this.context.font = 'bold 48px serif';
-        this.context.fillStyle = '#fff';
-        this.context.fillText('GAME FINISHED', 150, 200);
-    };
+    /* game global state processing */
 
     private processNewGameState = () => {
         const state = gameState.getState();
@@ -104,16 +149,17 @@ class GameEngine {
                 this.start();
                 break;
             case GlobalGameState.Paused:
-                this.pause();
+                this.stop();
                 break;
             case GlobalGameState.Resumed:
-                this.resume();
+                this.continue();
                 break;
             case GlobalGameState.LevelEnded:
                 this.levelEnd();
+                // todo navigating to level
                 break;
             case GlobalGameState.Ended:
-                this.finish();
+                this.stop();
                 break;
         }
     };
@@ -127,30 +173,17 @@ class GameEngine {
         this.processNewGameState();
     };
 
-    public gameControlPressed = (event: KeyboardEvent) => {
-        let direction: TDirection | undefined;
-        if (event.key === ControlKeys.UP) {
-            direction = 'Up';
-        } else if (event.key === ControlKeys.DOWN) {
-            direction = 'Down';
-        } else if (event.key === ControlKeys.LEFT) {
-            direction = 'Left';
-        } else if (event.key === ControlKeys.RIGHT) {
-            direction = 'Right';
-        }
-        const { player } = gameState;
-        if (direction) {
-            player.updateState(false, direction);
-        }
+    /* game control logic */
 
-        if (event.key === ControlKeys.SHOOT) {
-            console.log(event.key);
-            console.log('add shot');
-            const coordinates = player.getState().getCoordinates();
-            gameState.shots.push(
-                new GameShot(ShotType.Player, coordinates, this.animator.mainLoopIndex)
-            );
-        }
+    public gameControlPressed = (event: KeyboardEvent) =>
+        GameControlManager.gameControlPressed(event, this.mainLoopIndex);
+
+    public static isGameRunning = () => {
+        const globalGameState = gameState.getState();
+        return (
+            globalGameState === GlobalGameState.LevelStarted ||
+            globalGameState === GlobalGameState.Resumed
+        );
     };
 }
 
