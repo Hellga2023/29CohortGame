@@ -1,6 +1,7 @@
 import { ShotType } from '../types/common';
 import gameState from '../store/gameState';
 import GameShot from '../objects/base/shot';
+import { TDirection } from '../types/direction';
 
 // todo move it in some control module ?
 const ControlKeys = {
@@ -12,9 +13,7 @@ const ControlKeys = {
     SHOOT: 'a',
 };
 
-export type TDirection = 'Up' | 'Down' | 'Left' | 'Right';
-
-export class ControlManager {
+class ControlManager {
     public static gameControlPressed = (event: KeyboardEvent, time: number) => {
         let direction: TDirection | undefined;
         if (event.key === ControlKeys.UP) {
@@ -39,3 +38,5 @@ export class ControlManager {
         }
     };
 }
+
+export default ControlManager;

@@ -3,9 +3,12 @@ import gameState from '../store/gameState';
 import { GlobalGameState } from '../store/objectState';
 import { store } from '@/app/store/store';
 import { setGameState } from '@/app/store/slices/gameSlice';
-import { ControlManager } from './controlModule';
+import ControlManager from './controlModule';
 import CollisionModule from './collisionModule';
-import { TPoint } from '../types/common';
+import { ShotType, TPoint } from '../types/common';
+import GameShot from '../objects/base/shot';
+import { Direction, TDirection } from '../types/direction';
+import utils from '@/utils';
 
 class GameEngine {
     // eslint-disable-next-line no-use-before-define
@@ -188,11 +191,60 @@ class GameEngine {
     };
 
     public playerShot = () => {
-        throw Error('merge');
+        const { player } = gameState;
+        const coordinates = player.getState().getCoordinates();
+        console.log(coordinates);
+        gameState.shots.push(new GameShot(ShotType.Player, coordinates, this.mainLoopIndex));
     };
 
-    public setTargetedCoordinatesForPlayer = (point: TPoint) => {
-        throw Error('merge');
+    // eslint-disable-next-line class-methods-use-this
+    public getPlayerCoordinates = () => {
+        const { player } = gameState;
+        return { x: player.getState().getCoordinates().x, y: player.getState().getCoordinates().y };
+    };
+
+    // eslint-disable-next-line class-methods-use-this
+    private setDirectionForPlayer = (direction: TDirection) => {
+        const { player } = gameState;
+        // todo index not used
+        player?.updateState(false, direction); // todo shouldChangeFrame can be overwritten
+    };
+
+    private changePlayerCoordinatesInterval: ReturnType<typeof setInterval> | null = null;
+
+    public setTargetedCoordinatesForPlayer = ({ x: mouseX, y: mouseY }: TPoint) => {
+        if (this.changePlayerCoordinatesInterval) {
+            clearInterval(this.changePlayerCoordinatesInterval);
+        }
+
+        this.changePlayerCoordinatesInterval = setInterval(() => {
+            const { x: playerX, y: playerY } = this.getPlayerCoordinates();
+
+            if (
+                utils.approximatelyEqual(playerX, mouseX, 2) &&
+                utils.approximatelyEqual(playerY, mouseY, 2) &&
+                this.changePlayerCoordinatesInterval
+            ) {
+                clearInterval(this.changePlayerCoordinatesInterval);
+                return;
+            }
+
+            let direction = '';
+            if (mouseY < playerY) {
+                direction += Direction.Up;
+            }
+            if (mouseY > playerY) {
+                direction += Direction.Down;
+            }
+            if (mouseX > playerX) {
+                direction += Direction.Right;
+            }
+            if (mouseX < playerX) {
+                direction += Direction.Left;
+            }
+
+            this.setDirectionForPlayer(direction as TDirection);
+        }, 0);
     };
 }
 
