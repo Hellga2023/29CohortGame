@@ -67,7 +67,7 @@ const Game: FC = () => {
     };
 
     useEffect(() => {
-        if (state === GlobalGameState.LevelStarted || state === GlobalGameState.Resumed) {
+        if (GameEngine.isGameRunning()) {
             window.addEventListener('keydown', onKeyDown);
             shootInterval = setInterval(() => {
                 GameEngine.getInstance().playerShot();
@@ -107,15 +107,6 @@ const Game: FC = () => {
         return () => window.removeEventListener(GAME_EVENTS.objectIsDead, () => increment());
     }, []);
 
-    useEffect(() => {
-        if (GameEngine.isGameRunning()) {
-            window.addEventListener('keydown', onKeyDown);
-        }
-        return () => {
-            window.removeEventListener('keydown', onKeyDown);
-        };
-    }, [state]);
-
     if (state === GlobalGameState.Ended) {
         component = (
             <GameOver score={score} isWin={counter === DEMO_ENEMIES_COUNT} kills={counter} />
@@ -141,7 +132,7 @@ const Game: FC = () => {
                         <Button text="Start game" size="medium" click={startGame} />
                     )}
                     {state === GlobalGameState.Paused && (
-                        <Button text="Resume game" size="medium" click={resumeGame} />
+                        <Button text="Resume game" size="medium" click={pauseGame} />
                     )}
                     {(state === GlobalGameState.LevelStarted ||
                         state === GlobalGameState.Resumed) && (

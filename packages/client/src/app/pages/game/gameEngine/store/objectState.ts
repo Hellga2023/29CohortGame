@@ -108,4 +108,10 @@ export class ShotState extends BaseObjectState {
     };
 }
 
-const GAME_EVENTS = '';
+export const GAME_EVENTS = {
+    objectIsDead: 'objectIsDead',
+};
+
+export const EVENTS = {
+    [GAME_EVENTS.objectIsDead]: new Event(GAME_EVENTS.objectIsDead),
+};
