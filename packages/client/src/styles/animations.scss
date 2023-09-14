@@ -1,0 +1,89 @@
+@keyframes play {
+    0% {
+        background-position: 0px 0;
+    }
+
+    100% {
+        background-position: -7392px 0;
+    }
+}
+
+@keyframes moveUpDown {
+
+    0%,
+    100% {
+        top: 33%;
+    }
+
+    50% {
+        top: 32%;
+    }
+}
+
+@keyframes t {
+    from {
+        background-size: 0 200%
+    }
+}
+
+@keyframes b {
+    50% {
+        background-position: 0 -100%, 0 0
+    }
+}
+
+@keyframes moveDownLoop {
+
+    0% {
+        top: 0%;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+
+@keyframes moveDownLoop2 {
+
+    0% {
+        top: -100%;
+    }
+
+    100% {
+        top: 0%;
+    }
+}
+
+@keyframes moveDownLoop3 {
+
+    0% {
+        top: 0%;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+
+@keyframes moveDownLoop4 {
+
+    0% {
+        top: -100%;
+    }
+
+    100% {
+        top: 0%;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}

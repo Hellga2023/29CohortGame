@@ -13,6 +13,7 @@ export type TInputProps = {
     placeholder?: string;
     className?: string;
     wrapType?: string;
+    type?: string;
 };
 
 const LazyInput: FC<TInputProps> = ({
@@ -23,6 +24,7 @@ const LazyInput: FC<TInputProps> = ({
     value = '',
     label = '',
     name = '',
+    type = 'text',
     placeholder,
     className,
     wrapType,
@@ -37,6 +39,7 @@ const LazyInput: FC<TInputProps> = ({
         className={classNames(className, wrapType)}
         inputStyle={inputStyle}
         size={size}
+        type={type}
     />
 );
 

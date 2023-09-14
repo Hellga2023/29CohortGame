@@ -2,7 +2,7 @@ import React, { FC, MouseEventHandler } from 'react';
 import classNames from 'classnames';
 import style from './button.module.scss';
 
-type TButtonStyle = 'normal' | 'withoutBackGround';
+type TButtonStyle = 'normal' | 'withoutBackGround' | 'icon';
 type TButtonSize = 'large' | 'medium' | 'small';
 type TButtonType = 'button' | 'submit';
 

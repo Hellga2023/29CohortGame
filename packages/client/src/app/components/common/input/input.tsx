@@ -12,6 +12,7 @@ type TInputProps = {
     label?: string;
     placeholder?: string;
     className?: string;
+    type?: string;
 };
 
 const Input: FC<TInputProps> = ({
@@ -22,18 +23,19 @@ const Input: FC<TInputProps> = ({
     value = '',
     label = '',
     name = '',
+    type = 'text',
     placeholder,
     className,
 }) => (
     <label className={classNames('inputWrapper', style[size], style[inputStyle], className)}>
-        <span>{label}</span>
+        <span className="line">{label}</span>
         <input
             onChange={onChange}
             name={name}
             value={value}
             disabled={!isActive}
             placeholder={placeholder}
-            type="text"
+            type={type}
         />
     </label>
 );

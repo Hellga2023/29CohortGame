@@ -1,24 +1,52 @@
 :root {
     --boxShadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
 
-    --textColor: #f0efea;
-    --textColorSecondary: #80472d;
+    --themeFlagDarkMode: 0;
+    --themeFlagLightMode: 1;
+
+    --textColorLightMode: #000218;
+    --textColorDarkMode: #fbd809;
+    --textColorOldMode: #f0efea;
+
+    --textColorSecondaryLightMode: #ffffff;
+    --textColorSecondaryDarkMode: #ffffff;
+
+    --textColorAddLightMode: #ffb300;
+    --textColorAddDarkMode: #ffb300;
+
     --alertColor: #ff8749;
 
-    --backgroundColorDarkMode: #000218;
-    --backgroundColorSecondaryDarkMode: #344756;
+    --backgroundColorDarkMode: #344756;
+    --backgroundColorSecondaryDarkMode: #000218;
     --backgroundInputDarkMode: #d2d2d2;
     --backgroundButtonColorDarkMode: #595b82;
 
-    --backgroundColorLightMode: #009797;
-    --backgroundColorSecondaryLightMode: #95b1b0;
-    --backgroundInputLightMode: #fff;
+    --backgroundColorNormalMode: #009797;
+    --backgroundColorSecondaryNormalMode: #95b1b0;
+    --backgroundInputNormalMode: #fff;
+    --backgroundButtonColorNormalMode: #324b4b;
+
+    --backgroundColorLightMode: #fffaeb;
+    --backgroundColorSecondaryLightMode: #fbd809;
+    --backgroundInputLightMode: #000218;
     --backgroundButtonColorLightMode: #324b4b;
+
+    --textColor: var(--textColorLightMode);
+    --textColorSecondary: var(--textColorSecondaryLightMode);
+    --textColorAdd: var(--textColorAddLightMode);
 
     --backgroundColor: var(--backgroundColorLightMode);
     --backgroundColorSecondary: var(--backgroundColorSecondaryLightMode);
     --backgroundInput: var(--backgroundInputLightMode);
     --backgroundButtonColor: var(--backgroundButtonColorLightMode);
+
+    --textColorReverse: var(--textColorDarkMode);
+    --backgroundColorReverse: var(--backgroundColorDarkMode);
+    --backgroundColorSecondaryReverse: var(--backgroundColorSecondaryDarkMode);
+    --backgroundInputReverse: var(--backgroundInputDarkMode);
+    --backgroundButtonColorReverse: var(--backgroundButtonColorDarkMode);
+
+    --themeFlag: var(--themeFlagLightMode);
 
     --fontSizeLarge: 30px;
     --fontSizeMedium: 20px;
@@ -48,4 +76,25 @@
     --margin_default: 16px;
     --margin_small: 12px;
     --margin_x_small: 8px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--backgroundColor);
+    color: var(--textColor);
+    font-family: monospace;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+input {
+    cursor: inherit;
 }

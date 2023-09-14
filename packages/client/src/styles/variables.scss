@@ -13,11 +13,11 @@ $fontSizeMedium: 20px;
 $fontSizeSmall: 16px;
 
 @mixin transition {
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 @mixin slowTransition {
-    transition: all 0.6s ease-in-out;
+    transition: all 0.4s ease-in-out;
 }
 
 @mixin fontLarge {

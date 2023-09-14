@@ -34,6 +34,7 @@ const LazyForm: FC<TLazyFormProps> = ({
             <LazyInput
                 key={inputData.name}
                 value={inputData.value}
+                type={inputData.type}
                 wrapType={wrapType}
                 onChange={e => handleChange(e as ChangeInputEvent, inputData.handler)}
                 name={inputData.name}

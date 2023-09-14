@@ -1,6 +1,4 @@
 import React, { FC, ReactNode } from 'react';
-// import classNames from 'classnames';
-// import style from './form.module.scss';
 
 type TFormProps = {
     children?: ReactNode;

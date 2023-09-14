@@ -1,5 +1,9 @@
 @import '@/styles/variables.scss';
 
+button {
+    cursor: pointer;
+}
+
 .normal {
     cursor: pointer;
     border: none;
@@ -23,7 +27,25 @@
 }
 
 .withoutBackGround {
-    cursor: pointer;
+    border: 2px solid var(--textColor);
+    border-radius: 5px;
+    background: none;
+    color: var(--textColor);
+
+    box-shadow: 0px 0px 4px var(--textColor);
+
+    &:hover {
+        background-color: var(--textColor);
+        border-color: var(--textColorReverse);
+        color: var(--textColorReverse);
+    }
+
+    &:active {
+        scale: 0.8 0.8;
+    }
+}
+
+.icon {
     border: none;
     color: var(--textColor);
     background-color: rgba(0,0,0,0);

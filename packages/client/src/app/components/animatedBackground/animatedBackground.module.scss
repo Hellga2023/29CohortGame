@@ -1,0 +1,70 @@
+@import '@/styles/variables.scss';
+@import '@/styles/animations.scss';
+
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    overflow: hidden;
+
+    filter: invert(var(--themeFlag));
+}
+
+.noInvert {
+    filter: none;
+}
+
+.stars {
+    filter: blur(3px);
+
+    position: fixed;
+    width: 100%;
+    min-width: 2100px;
+    height: 100%;
+
+    left: 0%;
+    right: 0;
+
+    background-color: none;
+
+    background: rgba(0, 0, 0, 0) url('/src/assets/images/backgrounds/stars1.png');
+    opacity: 0.5;
+
+    animation: moveDownLoop 30s linear infinite reverse, pulse 2s ease-in-out infinite;
+}
+
+.stars:nth-child(2) {
+    animation: moveDownLoop2 30s linear infinite reverse, pulse 2s ease-in-out infinite 0.5s;
+}
+
+.stars:nth-child(3) {
+    filter: blur(6px);
+    scale: -1 1;
+    animation: moveDownLoop3 20s linear infinite reverse, pulse 4s ease-in-out infinite 1s;
+}
+
+.stars:nth-child(4) {
+    filter: blur(6px);
+
+    scale: -1 1;
+    animation: moveDownLoop4 20s linear infinite reverse, pulse 4s ease-in-out infinite 0s;
+}
+
+.bg {
+    filter: blur(10px);
+    position: absolute;
+    content: "";
+
+    top: 0%;
+    left: -2%;
+
+    width: 105%;
+    height: 200vh;
+
+    background: url('/src/assets/images/backgrounds/spacebox.png') no-repeat;
+    background-size: cover;
+}
+
+.bgBefore {
+    scale: 1 -1;
+}

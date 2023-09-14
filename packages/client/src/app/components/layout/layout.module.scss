@@ -1,23 +1,13 @@
 @import '@/styles/variables.scss';
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: monospace;
-}
-
-a {
-    text-decoration: none;
-}
-
-body {
-    background-color: var(--backgroundColor);
-}
-
 .wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
     flex-grow: 1;
+}
+
+.content {
+    z-index: 1;
+    margin: 0 auto;
 }

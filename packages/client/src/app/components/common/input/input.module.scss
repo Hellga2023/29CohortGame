@@ -1,7 +1,13 @@
-.normal {
-    
-}
-
 label {
     cursor: pointer;
+
+    // color: var(--textColor)
+}
+
+input {
+    height: 30px;
+    padding-left: 8px;
+
+    color: var(--textColor);
+    caret-color: var(--textColor);
 }

@@ -102,7 +102,7 @@ const Profile: FC<TProfilePageProps> = ({ data }) => {
 
                 <div className="formWrapper onOneLine">
                     <LazyForm
-                        wrapType="onOneLine line stretch"
+                        wrapType="onOneLine row stretch"
                         inputs={useMemo(
                             () => [
                                 { name: 'login', value: login, handler: setLogin },
@@ -118,28 +118,39 @@ const Profile: FC<TProfilePageProps> = ({ data }) => {
                             ],
                             [login, displayName, firstName, secondName, email, phone]
                         )}>
-                        <Button text="Save" click={handleSubmitForm} />
+                        <Button
+                            text="Save"
+                            click={handleSubmitForm}
+                            buttonStyle="withoutBackGround"
+                        />
                     </LazyForm>
                 </div>
 
                 <div className="formWrapper onOneLine">
                     <LazyForm
+                        wrapType="onOneLine row stretch"
                         inputs={useMemo(
                             () => [
                                 {
                                     name: 'oldPassword',
                                     value: oldPassword,
                                     handler: setOldPassword,
+                                    type: 'password',
                                 },
                                 {
                                     name: 'newPassword',
                                     value: newPassword,
                                     handler: setNewPassword,
+                                    type: 'password',
                                 },
                             ],
                             [oldPassword, newPassword]
                         )}>
-                        <Button text="Change password" click={handleSubmitPassword} />
+                        <Button
+                            text="Change password"
+                            click={handleSubmitPassword}
+                            buttonStyle="withoutBackGround"
+                        />
                     </LazyForm>
                 </div>
             </div>
