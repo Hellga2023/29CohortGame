@@ -1,10 +1,6 @@
 import HTTPTransport from '@/utils/HTTPTransport/HTTPTransport';
 import BaseAPI, { API_URL } from '../api';
 import { AuthUserData } from '@/const/dataTypes/dataTypes';
-import { TResponse } from '@/const/types';
-import utils from '@/utils';
-import { store } from '../store/store';
-import { signIn, signOut } from '../store/slices/userSlice';
 
 const http = HTTPTransport;
 const options = {};
@@ -15,40 +11,24 @@ const headersJSON = {
 class AuthAPI extends BaseAPI {
     url = `${API_URL.HOST}/auth`;
 
-    async login(data: AuthUserData, callback: () => void) {
+    async login(data: AuthUserData) {
         const userResponse = (await this.getAuthUser()) as Response;
 
-        // todo handle logged in users so that signin form
-        // will not be shown until logout
         if (userResponse.status === 200) {
-            callback();
+            await this.logout();
         }
 
-        return this.signin(callback, data);
+        return this.signin(data);
     }
 
-    signin(callback: () => void, data: object = {}) {
+    signin(data: object = {}) {
         const reqOptions = {
             ...options,
             headers: headersJSON,
             data: JSON.stringify(data),
         };
 
-        http.post(`${this.url}/signin`, reqOptions)
-            .then(response => {
-                const status = (response as TResponse)?.status;
-                if (status === 200) {
-                    return this.getAuthUser();
-                }
-
-                return null;
-            })
-            .then(response => {
-                const responseData = utils.safeGetData(response, true);
-                store.dispatch(signIn(responseData));
-                console.log('before callback');
-                callback();
-            });
+        return http.post(`${this.url}/signin`, reqOptions);
     }
 
     signup(data: object = {}) {
@@ -65,11 +45,8 @@ class AuthAPI extends BaseAPI {
         return http.get(`${this.url}/user`);
     }
 
-    logout(callback: () => void) {
-        http.post(`${this.url}/logout`).then(() => {
-            store.dispatch(signOut());
-            callback();
-        });
+    logout() {
+        return http.post(`${this.url}/logout`);
     }
 }
 
