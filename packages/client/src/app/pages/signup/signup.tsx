@@ -105,7 +105,7 @@ const Signup: FC = () => {
                     className="column"
                 />
 
-                <Button text="Signup" click={handleSubmitForm} />
+                <Button text="Signup" click={handleSubmitForm} buttonStyle="withoutBackGround" />
             </Form>
         </div>
     );

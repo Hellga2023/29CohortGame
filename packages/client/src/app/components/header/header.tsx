@@ -50,9 +50,7 @@ const Header: FC<THeaderProps> = () => {
                 <div className={classNames(style.header__logoWrapper)}>
                     <img className={style.header__logo} src={Logo} alt="Home" />
 
-                    <div className={style.header__title}>
-                        <b>Black Star</b>
-                    </div>
+                    <h3 className={style.header__title}>Black Star</h3>
                 </div>
             </Link>
 

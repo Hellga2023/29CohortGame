@@ -6,6 +6,8 @@ class Trajectory {
 
     private segmentIndex = 0;
 
+    private logged = false;
+
     private segmentStartTime = 0;
 
     private delay = 0;
@@ -173,8 +175,10 @@ class Trajectory {
     public movedOutOfGameField = (time: number): boolean => {
         // todo calculate if ship or shoot coordinate is outside of canvas
         // to set dead state not to render this objects
-        console.log(time);
-        console.log(this.delay);
+        if (this.logged) {
+            console.log(time);
+            console.log(this.delay);
+        }
         return false;
     };
 }

@@ -17,6 +17,7 @@ export type AuthUserData = {
 
 export type TGameScore = {
     score: number;
+    isWin?: boolean;
     kills?: number;
     timeInSeconds?: number;
 };

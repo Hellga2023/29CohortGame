@@ -107,3 +107,5 @@ export class ShotState extends BaseObjectState {
         }
     };
 }
+
+const GAME_EVENTS = '';

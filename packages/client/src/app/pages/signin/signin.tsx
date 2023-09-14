@@ -54,6 +54,7 @@ const Signin: FC = () => {
                 />
 
                 <Button text="Signin" click={handleSubmitForm} buttonStyle="withoutBackGround" />
+
                 <Button text="Signup" click={() => navigate(RoutePaths.SIGNUP)} />
             </Form>
         </div>
