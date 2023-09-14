@@ -1,0 +1,10 @@
+@import '@/styles/variables.scss';
+
+.link {
+    @include link;
+}
+
+.link:hover,
+.link_active {
+    @include hoveredLink;
+}

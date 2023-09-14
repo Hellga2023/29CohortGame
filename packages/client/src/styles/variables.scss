@@ -78,6 +78,21 @@ $fontSizeSmall: 16px;
 
 $buttonBackgroundColor: #324b4b;
 
+/* link */
+
+@mixin link {
+    display: flex;
+    color: var(--textColor);
+    font-size: 20px;
+    font-weight: 600;
+    @include transition;
+}
+
+@mixin hoveredLink {
+    color: var(--textColorSecondary);
+    text-decoration: underline;
+}
+
 /* header */
 
 $headerHeight: 100px;

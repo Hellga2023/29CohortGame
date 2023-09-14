@@ -48,17 +48,12 @@
 }
 
 .header__link {
-    display: flex;
-    color: var(--textColor);
-    font-size: 20px;
-    font-weight: 600;
-    @include transition;
+    @include link;
 }
 
 .header__link:hover,
 .header__link_active {
-    color: var(--textColorSecondary);
-    text-decoration: underline;
+    @include hoveredLink;
 }
 
 .header__changeColorMode {
