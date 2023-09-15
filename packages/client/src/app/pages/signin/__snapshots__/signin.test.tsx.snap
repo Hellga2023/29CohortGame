@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`signIn page tests Button snapshot test 1`] = `
+<button
+  className=""
+  disabled={false}
+  onClick={[Function]}
+  type="button"
+>
+  Hello, Jest!
+</button>
+`;
+
+exports[`signIn page tests Signin page snapshot test 1`] = `
+<div
+  className="formWrapper"
+>
+  <form
+    className="column withGap"
+  >
+    <label
+      className="inputWrapper column"
+    >
+      <span
+        className="line"
+      >
+        login
+      </span>
+      <input
+        disabled={false}
+        name="login"
+        onChange={[Function]}
+        placeholder="login"
+        type="text"
+        value=""
+      />
+    </label>
+    <label
+      className="inputWrapper column"
+    >
+      <span
+        className="line"
+      >
+        password
+      </span>
+      <input
+        disabled={false}
+        name="password"
+        onChange={[Function]}
+        placeholder="password"
+        type="text"
+        value=""
+      />
+    </label>
+    <button
+      className=""
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Signin
+    </button>
+    <button
+      className=""
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Signup
+    </button>
+  </form>
+</div>
+`;

@@ -19,7 +19,7 @@ class Trajectory {
         }
     }
 
-    private static getSegmentLength = (startPoint: TPoint, endPoint: TPoint): number =>
+    public static getSegmentLength = (startPoint: TPoint, endPoint: TPoint): number =>
         Math.hypot(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
 
     private static getNextCoordinate = (
