@@ -70,6 +70,6 @@ export default class PlayerShip extends GameShip {
             }
         }
 
-        state.changeFrameIndex(this.parameters.frameCount, shouldChangeFrame);
+        state.changeFrameIndex(this.frameCount, shouldChangeFrame);
     };
 }

@@ -1,6 +1,6 @@
 import { TPoint } from '../types/commonTypes';
 import Trajectory from '../objects/trajectory';
-import { DrawableObjectState } from '../objects/baseObject';
+import { BaseState } from '../objects/base/baseObject';
 
 export enum GlobalGameState {
     Loaded,
@@ -30,7 +30,7 @@ export const EVENTS = {
     [GAME_EVENTS.objectIsDead]: new Event(GAME_EVENTS.objectIsDead),
 };
 
-export class ShipState extends DrawableObjectState {
+export class ShipState extends BaseState {
     private liveState: LiveState;
 
     constructor(coordinates: TPoint, trajectory: Trajectory, liveState: LiveState) {
@@ -81,7 +81,7 @@ export class ShipState extends DrawableObjectState {
     };
 }
 
-export class ShotState extends DrawableObjectState {
+export class ShotState extends BaseState {
     private show: boolean;
 
     private startTime: number;

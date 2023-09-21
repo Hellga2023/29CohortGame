@@ -1,5 +1,5 @@
 import params from '@game/parameters/gameParameters';
-import BaseObject from '../objects/baseObject';
+import BaseObject from '../objects/base/baseObject';
 
 class Painter {
     private bgImage = new Image();
@@ -13,20 +13,19 @@ class Painter {
     }
 
     public drawFrame = (object: BaseObject) => {
-        const parameters = object.getParameters();
         const state = object.getState();
-        const spriteX = parameters.width * state.getFrameIndex();
+        const spriteX = object.width * state.getFrameIndex();
         const coordinates = state.getCoordinates();
         this.context.drawImage(
             object.image,
             spriteX,
             0,
-            parameters.width,
-            parameters.height,
+            object.width,
+            object.height,
             coordinates.x,
             coordinates.y,
-            parameters.width,
-            parameters.height
+            object.width,
+            object.height
         );
     };
 

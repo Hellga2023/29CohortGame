@@ -5,7 +5,7 @@ import { ShotType } from '../types/commonTypes';
 import { GlobalGameState } from '../store/objectState';
 import { store } from '@/app/store/store';
 import { setGameState } from '@/app/store/slices/gameSlice';
-import CollisionManager from './collisionManager';
+import CollisionModule from './collisionModule';
 
 class GameEngine {
     // eslint-disable-next-line no-use-before-define
@@ -86,7 +86,7 @@ class GameEngine {
 
         /* detect if any ship is hit */
 
-        CollisionManager.collisionDetection();
+        CollisionModule.collisionDetection();
 
         /* game state logic */
 

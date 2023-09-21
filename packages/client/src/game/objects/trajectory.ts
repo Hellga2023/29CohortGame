@@ -1,5 +1,5 @@
-import TrajectoryHelper from '../../app/pages/game/gameEngine/helpers/trajectoryHelper';
-import { TPoint } from '../types/commonTypes';
+import TrajectoryHelper from '@game/helpers/trajectoryHelper';
+import { TPoint } from '@game/types/commonTypes';
 
 class Trajectory {
     private points: TPoint[];

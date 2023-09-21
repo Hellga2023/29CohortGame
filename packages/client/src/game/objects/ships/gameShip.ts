@@ -1,13 +1,13 @@
-import BaseObject, { DrawableObjectState } from '../baseObject';
-import { ShipTypesParameterValues } from '../../parameters/gameObjectsParameters';
-import { LiveState, ShipState } from '../../store/objectState';
-import { ShipType } from '../../types/commonTypes';
+import BaseObject, { BaseState } from '@game/objects/base/baseObject';
+import { ShipTypesParameterValues } from '@game/parameters/gameObjectsParameters';
+import { LiveState, ShipState } from '@game/store/objectState';
+import { ShipType } from '@game/types/commonTypes';
 
 export default class GameShip extends BaseObject {
     // todo do we need this?
     public type: ShipType;
 
-    constructor(state: DrawableObjectState, type: ShipType) {
+    constructor(state: BaseState, type: ShipType) {
         super(state, ShipTypesParameterValues[type]);
         this.type = type;
     }
