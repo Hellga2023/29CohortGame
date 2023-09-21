@@ -1,9 +1,9 @@
-import DrawableGameObject, { DrawableObjectState } from '../../core/drawableGameObject';
+import BaseObject, { DrawableObjectState } from '../baseObject';
 import { ShipTypesParameterValues } from '../../parameters/gameObjectsParameters';
 import { LiveState, ShipState } from '../../store/objectState';
 import { ShipType } from '../../types/commonTypes';
 
-export default class GameShip extends DrawableGameObject {
+export default class GameShip extends BaseObject {
     // todo do we need this?
     public type: ShipType;
 
@@ -15,6 +15,8 @@ export default class GameShip extends DrawableGameObject {
     protected getShipState = () => this.getState() as ShipState;
 
     public setLiveState = (state: LiveState) => this.getShipState().setLiveState(state);
+
+    public setHit = () => this.setLiveState(LiveState.Exploiding);
 
     public isDead = () => this.getShipState().isDead();
 

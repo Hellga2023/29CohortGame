@@ -19,7 +19,8 @@
             "@/*": ["./src/*"],
             "@components/*": ["./src/components/*"],
             "@pages/*": ["./src/pages/*"],
-            "@common/*": ["./src/components/common/*"]
+            "@common/*": ["./src/components/common/*"],
+            "@game/*": ["./src/game/*"]
         }
     },
     "include": ["src"],

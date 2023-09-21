@@ -1,4 +1,4 @@
-import Trajectory from '../objects/trajectory';
+import Trajectory from './trajectory';
 import { TPoint } from '../types/commonTypes';
 
 /* Common state for ships and shots */
@@ -49,7 +49,7 @@ export class DrawableObjectParams {
 }
 
 /* Common object that can be drawn */
-export default class DrawableGameObject {
+export default class BaseObject {
     public image = new Image();
 
     protected state: DrawableObjectState;

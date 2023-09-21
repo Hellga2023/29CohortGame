@@ -1,89 +1,89 @@
-import React, { FC, useEffect, useRef, useState, SyntheticEvent } from 'react';
+// TODO: read about useCallback and expencive cascading rerenders
+import React, { FC, useEffect, useCallback, useRef, useState, SyntheticEvent } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
-
-import style from './game.module.scss';
-import Button from '@/app/components/common/button/button';
-import params from './gameEngine/parameters/gameParameters';
-import GameEngine from './gameEngine/core/gameEngine';
-import { GAME_EVENTS, GlobalGameState } from './gameEngine/store/objectState';
+import params from '@game/parameters/gameParameters';
+import GameEngine from '@game/core/engine';
+import { GAME_EVENTS, GlobalGameState } from '@game/store/objectState';
 import { RootState } from '@/app/store/store';
 import GameOver from '@/app/components/gameOver/gameOver';
 import StartGame from '../startGame/startGame';
-import gameState from './gameEngine/store/gameState';
 import AnimatedBackground from '@/app/components/animatedBackground/animatedBackground';
+import controlModule from '@/game/core/controlModule';
+import style from './game.module.scss';
+import Button from '@/app/components/common/button/button';
 
 const DEMO_ENEMIES_COUNT = 11; // TODO: автоматизировать процессы игры
 
 const Game: FC = () => {
-    const ref = useRef<HTMLCanvasElement | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const contextDelegate = useCallback((): CanvasRenderingContext2D => {
+        if (!canvasRef.current) {
+            throw Error('contextDelegate no context found');
+        }
+        return canvasRef.current.getContext('2d')!;
+    }, []);
+    const gameEngineRef = useRef<GameEngine | null>(new GameEngine(contextDelegate));
+
     const [paused, setIsPaused] = useState(false);
     const [counter, setCounter] = useState(0);
     const { gameState: state, score } = useSelector((rootState: RootState) => rootState.game);
     let shootInterval: ReturnType<typeof setInterval> | null = null;
     let component;
 
-    const onKeyDown = (event: KeyboardEvent) => {
+    /* const onKeyDown = (event: KeyboardEvent) => {
         GameEngine.getInstance().gameControlPressed(event);
-    };
+    }; */
 
     const startGame = () => {
-        // GameEngine.getInstance().setGameState(GlobalGameState.LevelLoading);
+        // gameEngineRef.current?.setGameState(GlobalGameState.LevelLoading);
         // Временно включаю сразу состояние начало игры из-за бага, к зачету починим
-        GameEngine.getInstance().setGameState(GlobalGameState.LevelStarted);
+        gameEngineRef.current?.setGameState(GlobalGameState.LevelStarted);
 
+        // todo move to engine
         shootInterval = setInterval(() => {
             console.log('ddd');
-            GameEngine.getInstance().playerShot();
+            gameEngineRef.current?.playerShoot();
         }, 500);
     };
 
     const pauseGame = () => {
         if (paused) {
-            GameEngine.getInstance().setGameState(GlobalGameState.Resumed);
+            gameEngineRef.current?.setGameState(GlobalGameState.Resumed);
             setIsPaused(false);
         } else {
-            GameEngine.getInstance().setGameState(GlobalGameState.Paused);
+            gameEngineRef.current?.setGameState(GlobalGameState.Paused);
             setIsPaused(true);
         }
     };
 
     const resumeGame = () => {
-        GameEngine.getInstance().setGameState(GlobalGameState.Resumed);
+        gameEngineRef.current?.setGameState(GlobalGameState.Resumed);
         setIsPaused(false);
     };
 
     const handleMouseMove = (ev: SyntheticEvent) => {
-        if (
-            gameState.getState() !== GlobalGameState.LevelStarted &&
-            gameState.getState() !== GlobalGameState.Resumed
-        ) {
+        if (GameEngine.isGameRunning()) {
             return;
         }
-        const halfShipHeight = 35;
-        const halfShipWidth = 30;
         const mouseX =
-            (ev.nativeEvent as MouseEvent).clientX -
-            (ev.target as HTMLElement).offsetLeft -
-            halfShipHeight;
+            (ev.nativeEvent as MouseEvent).clientX - (ev.target as HTMLElement).offsetLeft;
         const mouseY =
-            (ev.nativeEvent as MouseEvent).clientY -
-            (ev.target as HTMLElement).offsetTop -
-            halfShipWidth;
-        const gameEngine = GameEngine.getInstance();
+            (ev.nativeEvent as MouseEvent).clientY - (ev.target as HTMLElement).offsetTop;
 
-        gameEngine.setTargetedCoordinatesForPlayer({ x: mouseX, y: mouseY });
+        controlModule.setTargetedCoordinatesForPlayer({ x: mouseX, y: mouseY });
     };
 
     useEffect(() => {
         if (state === GlobalGameState.LevelStarted || state === GlobalGameState.Resumed) {
-            window.addEventListener('keydown', onKeyDown);
+            // window.addEventListener('keydown', onKeyDown);
+            // TODO: move to game engine?
             shootInterval = setInterval(() => {
-                GameEngine.getInstance().playerShot();
+                gameEngineRef.current?.playerShoot();
             }, 500);
         }
         return () => {
-            window.removeEventListener('keydown', onKeyDown);
+            // window.removeEventListener('keydown', onKeyDown);
             if (shootInterval) {
                 clearInterval(shootInterval);
             }
@@ -94,24 +94,20 @@ const Game: FC = () => {
         setCounter(counter + 1);
     };
 
+    // TODO: replace with redux
     window.addEventListener(GAME_EVENTS.objectIsDead, increment);
 
-    useEffect(() => {
+    // TODO: replace
+    /* useEffect(() => {
         if (counter === DEMO_ENEMIES_COUNT) {
             const gameEngine = GameEngine.getInstance();
             gameEngine.setGameState(GlobalGameState.Ended);
             setIsPaused(true);
         }
-    }, [counter]);
+    }, [counter]); */
 
     useEffect(() => {
-        const context = (ref.current as HTMLCanvasElement).getContext('2d');
-        if (context) {
-            const gameEngine = GameEngine.getInstance(context);
-            gameEngine.setGameState(GlobalGameState.Loaded);
-        } else {
-            console.log('no context found');
-        }
+        gameEngineRef.current?.setGameState(GlobalGameState.Loaded);
 
         return () => window.removeEventListener(GAME_EVENTS.objectIsDead, increment);
     }, []);
@@ -127,7 +123,7 @@ const Game: FC = () => {
             <main className={classNames({ [style.default]: state === GlobalGameState.Loaded })}>
                 <div className={style.game__canvasWrapper}>
                     <canvas
-                        ref={ref}
+                        ref={canvasRef}
                         width={params.WIDTH}
                         height={params.HEIGHT}
                         onMouseMove={handleMouseMove}
@@ -159,4 +155,5 @@ const Game: FC = () => {
         </div>
     );
 };
+
 export default Game;

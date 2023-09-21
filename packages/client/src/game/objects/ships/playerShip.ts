@@ -1,12 +1,9 @@
-// eslint-disable-next-line
-
-import { Direction, TDirection } from '../../core/gameEngine';
-import { LiveState, ShipState } from '../../store/objectState';
-import { ShipType, TPoint } from '../../types/commonTypes';
-import Trajectory from '../trajectory';
+import { LiveState, ShipState } from '@game/store/objectState';
+import { ShipType, TPoint } from '@game/types/commonTypes';
+import Trajectory from '@game/objects/trajectory';
+import params from '@game/parameters/gameParameters';
 import GameShip from './gameShip';
-
-import params from '../../parameters/gameParameters';
+import { TDirection, Direction } from '@/game/core/controlModule';
 
 export default class PlayerShip extends GameShip {
     constructor(coordinates: TPoint) {

@@ -4,10 +4,13 @@ import styleLanding from '../../pages/landing/landing.module.scss';
 import { TGameScore } from '@/const/dataTypes/dataTypes';
 import Button from '../common/button/button';
 
+// this is game logic!
 const SCORE_COEFFICIENT = 10; // TODO: переделать на внешний подсчет
 
 const GameOver: FC<TGameScore> = ({ score, isWin, kills }) => {
     const [renderScore, setRenderScore] = useState(0);
+
+    // TODO: score, win state, killed enemies count - to redux!
 
     setTimeout(() => {
         // document.documentElement.style.cssText = `--game-score: ${score}`;

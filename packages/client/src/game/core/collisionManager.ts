@@ -1,9 +1,9 @@
 import state from '../store/gameState';
-import { LiveState } from '../store/objectState';
-import DrawableGameObject from './drawableGameObject';
+import BaseObject from '../objects/baseObject';
 
 class CollisionManager {
-    private static detectCollision(object1: DrawableGameObject, object2: DrawableGameObject) {
+    // TODO: try detect collision with circle instead of rect
+    private static detectCollision(object1: BaseObject, object2: BaseObject) {
         const point1 = object1.getState().getCoordinates();
         const params1 = object1.getParameters();
         const point2 = object2.getState().getCoordinates();
@@ -16,27 +16,28 @@ class CollisionManager {
         );
     }
 
-    private static detectPlayerHit = () => {
+    private static playerHitByEnemyShip = () => {
         const { player } = state;
 
         state.enemies.forEach(ship => {
             if (ship.shouldDetectCollision()) {
                 if (CollisionManager.detectCollision(player, ship)) {
-                    player.setLiveState(LiveState.Exploiding);
+                    player.setHit();
                     console.log('player hit');
                 }
             }
         });
     };
 
-    private static detectEnemyHit = () => {
+    // TODO: add enemy shots check here
+    private static enemyHit = () => {
         state.shots.forEach(shot => {
             if (shot.isPlayerShot() && shot.isVisible()) {
                 state.enemies.forEach(ship => {
                     if (ship.shouldDetectCollision()) {
                         if (CollisionManager.detectCollision(shot, ship)) {
                             console.log('ship hit');
-                            ship.setLiveState(LiveState.Exploiding);
+                            ship.setHit();
                         }
                     }
                 });
@@ -45,8 +46,8 @@ class CollisionManager {
     };
 
     public static collisionDetection = () => {
-        CollisionManager.detectPlayerHit();
-        CollisionManager.detectEnemyHit();
+        CollisionManager.playerHitByEnemyShip();
+        CollisionManager.enemyHit();
     };
 }
 

@@ -5,7 +5,7 @@ import FrigateImage from '@/assets/images/game/ships/Frigate.png';
 import RocketImage from '@/assets/images/game/shots/Rocket.png';
 import PlayerRocketImage from '@/assets/images/game/shots/PlayerRocket.png';
 import { ShipType, ShotType } from '../types/commonTypes';
-import { DrawableObjectParams } from '../core/drawableGameObject';
+import { DrawableObjectParams } from '../../../../../game/objects/baseObject';
 
 /* Shots parameters */
 

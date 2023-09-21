@@ -1,10 +1,10 @@
 import Trajectory from './trajectory';
-import { ShotParametersValues } from '../parameters/gameObjectsParameters';
+import { ShotParametersValues } from '../../app/pages/game/gameEngine/parameters/gameObjectsParameters';
 import { ShotState } from '../store/objectState';
 import { ShotType, TPoint } from '../types/commonTypes';
-import DrawableGameObject from '../core/drawableGameObject';
+import BaseObject from './baseObject';
 
-export default class GameShot extends DrawableGameObject {
+export default class GameShot extends BaseObject {
     private type: ShotType;
 
     constructor(type: ShotType, startPoint: TPoint, startTime: number) {

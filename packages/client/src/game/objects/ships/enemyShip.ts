@@ -1,4 +1,4 @@
-import Trajectory from '../trajectory';
+import Trajectory from '../../../../../../game/objects/trajectory';
 import { LiveState, ShipState } from '../../store/objectState';
 import { ShipType } from '../../types/commonTypes';
 import GameShip from './gameShip';

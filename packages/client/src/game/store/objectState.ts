@@ -1,6 +1,6 @@
 import { TPoint } from '../types/commonTypes';
 import Trajectory from '../objects/trajectory';
-import { DrawableObjectState } from '../core/drawableGameObject';
+import { DrawableObjectState } from '../objects/baseObject';
 
 export enum GlobalGameState {
     Loaded,
@@ -21,6 +21,7 @@ export enum LiveState {
     Dead,
 }
 
+// TODO: remove? store changed -> all reducers are called
 export const GAME_EVENTS = {
     objectIsDead: 'objectIsDead',
 };

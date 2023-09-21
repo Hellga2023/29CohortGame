@@ -1,4 +1,4 @@
-import TrajectoryHelper from '../helpers/trajectoryHelper';
+import TrajectoryHelper from '../../app/pages/game/gameEngine/helpers/trajectoryHelper';
 import { TPoint } from '../types/commonTypes';
 
 class Trajectory {
