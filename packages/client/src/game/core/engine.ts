@@ -4,13 +4,11 @@ import GameShot from '../objects/gameShot';
 import { ShotType } from '../types/commonTypes';
 import { GlobalGameState } from '../store/objectState';
 import { store } from '@/app/store/store';
-import { setGameState } from '@/app/store/slices/gameSlice';
-import CollisionModule from './collisionModule';
+import { setGameState, setKilledNumber, setScore } from '@/app/store/slices/gameSlice';
+import collisionModule from './collisionModule';
+import controlModule from './controlModule';
 
 class GameEngine {
-    // eslint-disable-next-line no-use-before-define
-    // private static instance?: GameEngine;
-
     private painter: Painter;
 
     private frameCount = 0;
@@ -27,40 +25,82 @@ class GameEngine {
         this.painter = new Painter(contextDelegate);
     }
 
-    /* public static getInstance = (ctx?: CanvasRenderingContext2D) => {
-        if (!GameEngine.instance && ctx) {
-            GameEngine.instance = new GameEngine(ctx);
-        }
+    private drawGame = () => {
+        this.painter.drawBackground();
 
-        if (GameEngine.instance) {
-            return GameEngine.instance;
-        }
-
-        throw new Error('no context provided for gameEngine');
-    }; */
-
-    private drawGameFrame = () => {
         const { player } = gameState;
-        !player.isDead() && this.painter.drawFrame(player);
-        gameState.enemies.forEach(enemy => {
-            !enemy.isDead() && !enemy.isWaiting() && this.painter.drawFrame(enemy);
-        });
+        this.painter.drawFrame(player);
 
-        gameState.shots.forEach(shot => {
-            shot.isVisible() && this.painter.drawFrame(shot);
-        });
+        gameState.enemies.forEach(
+            enemy => !enemy.isDead() && !enemy.isWaiting() && this.painter.drawFrame(enemy)
+        );
+
+        gameState.shots.forEach(shot => shot.isVisible() && this.painter.drawFrame(shot));
     };
 
-    private updateObjectsState = (shouldChangeFrame: boolean) => {
-        const { player } = gameState;
-        !player.isDead() && player.updateState(shouldChangeFrame);
-        gameState.enemies.forEach(enemy => {
-            !enemy.isDead() && enemy.updateState(this.mainLoopIndex, shouldChangeFrame);
-        });
+    private shouldChangeFrame = (): boolean => {
+        this.frameCount++;
+        const shouldChangeFrame = this.frameCount === this.IMAGE_CHANGE_SPEED;
+        if (shouldChangeFrame) {
+            this.frameCount = 0;
+        }
+        return shouldChangeFrame;
+    };
 
-        gameState.shots.forEach(shot => {
-            shot.isVisible() && shot.updateState(this.mainLoopIndex, shouldChangeFrame);
-        });
+    private updateObjects = () => {
+        const shouldChangeFrame = this.shouldChangeFrame();
+
+        const { player } = gameState;
+        player.updateState(shouldChangeFrame);
+
+        gameState.enemies.forEach(
+            enemy => !enemy.isDead() && enemy.updateState(this.mainLoopIndex, shouldChangeFrame)
+        );
+
+        gameState.shots.forEach(
+            shot => shot.isVisible() && shot.updateState(this.mainLoopIndex, shouldChangeFrame)
+        );
+    };
+
+    private checkPlayerDead = () => {
+        if (gameState.player.isDead()) {
+            console.log('game ends');
+            this.isStopped = true;
+            window.cancelAnimationFrame(this.requestId);
+            this.setGameState(GlobalGameState.Ended);
+        }
+    };
+
+    private checkLevelEnds = () => {
+        console.log(this.mainLoopIndex);
+        console.log(gameState.getLevelTime());
+        if (this.mainLoopIndex === gameState.getLevelTime()) {
+            console.log('level ends');
+            this.isStopped = true;
+            window.cancelAnimationFrame(this.requestId);
+            this.setGameState(GlobalGameState.LevelEnded);
+        }
+    };
+
+    private setDeadCounter = () => {
+        const { enemiesKilled } = store.getState().game;
+        const actualKilledNumber = gameState.enemies.filter(e => e.isDead()).length;
+        if (enemiesKilled !== actualKilledNumber) {
+            // TODO: remove from redux!!!
+            store.dispatch(setKilledNumber(actualKilledNumber));
+        }
+        // todo get from level
+        // const DEMO_ENEMIES_COUNT = 11;
+        // if (actualKilledNumber == DEMO_ENEMIES_COUNT) {
+        // set win state?
+        this.setScore(actualKilledNumber);
+        // }
+    };
+
+    // eslint-disable-next-line class-methods-use-this
+    private setScore = (kills: number) => {
+        const SCORE_COEFFICIENT = 10;
+        store.dispatch(setScore((kills || 0) * SCORE_COEFFICIENT));
     };
 
     private mainLoop = () => {
@@ -69,46 +109,31 @@ class GameEngine {
             return;
         }
 
-        this.painter.drawBackground();
-
-        this.frameCount++;
-
-        const shouldChangeFrame = this.frameCount === this.IMAGE_CHANGE_SPEED;
-
         /* update objects state and draw them */
-        this.updateObjectsState(shouldChangeFrame);
+        this.updateObjects();
 
-        if (shouldChangeFrame) {
-            this.frameCount = 0;
-        }
-
-        this.drawGameFrame();
+        this.drawGame();
 
         /* detect if any ship is hit */
 
-        CollisionModule.collisionDetection();
+        collisionModule.checkCollisions();
 
-        /* game state logic */
+        /* set number of killed enemies */
 
-        if (gameState.player.isDead()) {
-            console.log('game ends');
-            this.isStopped = true;
-            window.cancelAnimationFrame(this.requestId);
-            this.setGameState(GlobalGameState.Ended);
-        }
+        this.setDeadCounter();
 
-        if (this.mainLoopIndex === gameState.getLevelTime()) {
-            console.log('level ends');
-            this.isStopped = true;
-            window.cancelAnimationFrame(this.requestId);
-            this.setGameState(GlobalGameState.LevelEnded);
-        }
+        /* set proper state if game or level ends */
+
+        this.checkPlayerDead();
+
+        this.checkLevelEnds();
 
         this.mainLoopIndex++; // do we need to replace this with time?
 
         this.requestId = window.requestAnimationFrame(this.mainLoop);
     };
 
+    /* game loop start, pause, continue and reset */
     public stop = () => {
         this.isStopped = true;
         window.cancelAnimationFrame(this.requestId);
@@ -133,17 +158,17 @@ class GameEngine {
     };
 
     // TODO: remove later
+    // remove start
     private load = () => this.painter.drawLoadScreen();
 
     private levelEnd = () => {
         this.stop();
         this.painter.drawLevelEnd();
     };
-
     // remove end
 
     private processNewGameState = () => {
-        const state = gameState.getState();
+        const { gameState: state } = store.getState().game;
         switch (state) {
             case GlobalGameState.Loaded:
                 this.load();
@@ -165,10 +190,6 @@ class GameEngine {
     };
 
     public setGameState = (state: GlobalGameState) => {
-        // console.log('in set state');
-        // console.log(gameState.getState());
-        gameState.setState(state);
-        // console.log(gameState.getState());
         store.dispatch(setGameState(state));
         this.processNewGameState();
     };
@@ -176,16 +197,21 @@ class GameEngine {
     public playerShoot = () => {
         const { player } = gameState;
         const coordinates = player.getState().getCoordinates();
-        console.log(coordinates);
+        // console.log(coordinates);
+        // TODO: check if coordinates are th same ref?
         gameState.shots.push(new GameShot(ShotType.Player, coordinates, this.mainLoopIndex));
     };
 
-    public static isGameRunning = () => {
-        const globalGameState = gameState.getState();
-        return (
-            globalGameState === GlobalGameState.LevelStarted ||
-            globalGameState === GlobalGameState.Resumed
-        );
+    public gameControlPressed = (event: KeyboardEvent) => {
+        const { player } = gameState;
+        const coordinates = player.getState().getCoordinates();
+        controlModule.gameControlPressed(event, coordinates, this.mainLoopIndex);
+    };
+
+    // eslint-disable-next-line class-methods-use-this
+    public isGameRunning = () => {
+        const { gameState: state } = store.getState().game;
+        return state === GlobalGameState.LevelStarted || state === GlobalGameState.Resumed;
     };
 }
 

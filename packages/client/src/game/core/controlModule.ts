@@ -1,16 +1,17 @@
 import utils from '@/utils';
 import gameState from '../store/gameState';
-import { TPoint } from '../types/commonTypes';
+import { ShotType, TPoint } from '../types/commonTypes';
+import GameShot from '../objects/gameShot';
 
 // TODO: choose control by keyboard or mouse
-/* const ControlKeys = {
+/**/ const ControlKeys = {
     LEFT: 'ArrowLeft',
     UP: 'ArrowUp',
     RIGHT: 'ArrowRight',
     DOWN: 'ArrowDown',
     PAUSE: 'Enter',
     SHOOT: 'a',
-}; */
+};
 
 export type TDirection =
     | 'Up'
@@ -36,7 +37,13 @@ export enum Direction {
 class ControlModule {
     private changePlayerCoordinatesInterval: ReturnType<typeof setInterval> | null = null;
 
-    /* public gameControlPressed = (event: KeyboardEvent) => {
+    // TODO: decide how to control and remove superflous methods
+    // eslint-disable-next-line class-methods-use-this
+    public gameControlPressed = (
+        event: KeyboardEvent,
+        coordinates: TPoint,
+        mainLoopIndex: number
+    ) => {
         let direction: TDirection | undefined;
         if (event.key === ControlKeys.UP) {
             direction = 'Up';
@@ -55,18 +62,16 @@ class ControlModule {
         if (event.key === ControlKeys.SHOOT) {
             console.log(event.key);
             console.log('add shot');
-            const coordinates = player.getState().getCoordinates();
-            gameState.shots.push(
-                new GameShot(ShotType.Player, coordinates, this.animator.mainLoopIndex)
-            );
+            gameState.shots.push(new GameShot(ShotType.Player, coordinates, mainLoopIndex));
         }
-    }; */
+    };
 
     // eslint-disable-next-line class-methods-use-this
     private setDirectionForPlayer = (direction: TDirection) => {
         const { player } = gameState;
-        // todo index not used
-        player.updateState(false, direction); // todo shouldChangeFrame can be overwritten
+        // todo shouldChangeFrame can be overwritten
+        // may be block moving when exploide?
+        player.updateState(false, direction);
     };
 
     // eslint-disable-next-line class-methods-use-this
@@ -76,9 +81,9 @@ class ControlModule {
     };
 
     public setTargetedCoordinatesForPlayer = (point: TPoint) => {
-        // TODO: move const
-        const halfShipHeight = 35;
-        const halfShipWidth = 30;
+        const { player } = gameState;
+        const halfShipHeight = player.height / 2;
+        const halfShipWidth = player.width / 2;
         const mouseX = point.x - halfShipHeight;
         const mouseY = point.y - halfShipWidth;
 

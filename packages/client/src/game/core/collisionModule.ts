@@ -3,7 +3,9 @@ import BaseObject from '../objects/base/baseObject';
 
 class CollisionModule {
     // TODO: try detect collision with circle instead of rect
-    private static detectCollision(object1: BaseObject, object2: BaseObject) {
+    // TODO: make all methods static!
+    // eslint-disable-next-line class-methods-use-this
+    private checkCollision(object1: BaseObject, object2: BaseObject) {
         const point1 = object1.getState().getCoordinates();
         const point2 = object2.getState().getCoordinates();
 
@@ -15,39 +17,33 @@ class CollisionModule {
         );
     }
 
-    private static playerHitByEnemyShip = () => {
+    private playerHitByEnemy = () => {
         const { player } = state;
 
         state.enemies.forEach(ship => {
-            if (ship.shouldDetectCollision()) {
-                if (CollisionModule.detectCollision(player, ship)) {
-                    player.setHit();
-                    console.log('player hit');
-                }
+            if (ship.shouldCheckCollision() && this.checkCollision(player, ship)) {
+                player.setHit();
             }
         });
     };
 
     // TODO: add enemy shots check here
-    private static enemyHit = () => {
+    private enemyHit = () => {
         state.shots.forEach(shot => {
-            if (shot.isPlayerShot() && shot.isVisible()) {
+            if (shot.shouldCheckCollision()) {
                 state.enemies.forEach(ship => {
-                    if (ship.shouldDetectCollision()) {
-                        if (CollisionModule.detectCollision(shot, ship)) {
-                            console.log('ship hit');
-                            ship.setHit();
-                        }
+                    if (ship.shouldCheckCollision() && this.checkCollision(shot, ship)) {
+                        ship.setHit();
                     }
                 });
             }
         });
     };
 
-    public static collisionDetection = () => {
-        CollisionModule.playerHitByEnemyShip();
-        CollisionModule.enemyHit();
+    public checkCollisions = () => {
+        this.playerHitByEnemy();
+        this.enemyHit();
     };
 }
 
-export default CollisionModule;
+export default new CollisionModule();

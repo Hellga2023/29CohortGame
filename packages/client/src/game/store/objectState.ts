@@ -18,6 +18,7 @@ export enum LiveState {
     Flying,
     Shooting,
     Exploiding,
+    FliedAway, // todo separate dead and fliedAway states
     Dead,
 }
 
@@ -56,13 +57,15 @@ export class ShipState extends BaseState {
     };
 
     // 2 action change index and set dead
-    public changeFrameIndex = (frameCount: number, shouldChangeFrame: boolean) => {
+    public changeFrameIndex = (shouldChangeFrame: boolean) => {
         if (this.isExploiding() && shouldChangeFrame) {
             this.frameIndex++;
+        }
+    };
 
-            if (this.frameIndex >= frameCount) {
-                this.setLiveState(LiveState.Dead);
-            }
+    public setDead = (frameCount: number) => {
+        if (this.frameIndex >= frameCount) {
+            this.setLiveState(LiveState.Dead);
         }
     };
 
@@ -74,10 +77,12 @@ export class ShipState extends BaseState {
             this.setLiveState(LiveState.Flying);
         } else if (!this.isDead() && this.trajectory.movedOutOfGameField(time)) {
             // if ship flied out of canvas set state to Dead
-            this.setLiveState(LiveState.Dead);
+            this.setLiveState(LiveState.FliedAway);
         }
 
-        this.changeFrameIndex(frameCount, shouldChangeFrame);
+        this.changeFrameIndex(shouldChangeFrame);
+
+        this.setDead(frameCount);
     };
 }
 

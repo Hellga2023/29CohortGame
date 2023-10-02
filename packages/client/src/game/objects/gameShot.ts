@@ -20,7 +20,9 @@ export default class GameShot extends BaseObject {
 
     public isVisible = () => (this.getState() as ShotState).isVisible();
 
-    public isPlayerShot = () => +this.type === ShotType.Player;
+    private isPlayerShot = () => +this.type === ShotType.Player;
+
+    public shouldCheckCollision = () => this.isPlayerShot() && this.isVisible();
 
     public updateState = (time: number, shouldChangeFrame: boolean) => {
         (this.getState() as ShotState).update(time, shouldChangeFrame, this.frameCount);

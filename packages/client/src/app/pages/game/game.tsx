@@ -1,5 +1,5 @@
 // TODO: read about useCallback and expencive cascading rerenders
-import React, { FC, useEffect, useCallback, useRef, useState, SyntheticEvent } from 'react';
+import React, { FC, useEffect, useCallback, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import params from '@game/parameters/gameParameters';
@@ -9,11 +9,9 @@ import { RootState } from '@/app/store/store';
 import GameOver from '@/app/components/gameOver/gameOver';
 import StartGame from '../startGame/startGame';
 import AnimatedBackground from '@/app/components/animatedBackground/animatedBackground';
-import controlModule from '@/game/core/controlModule';
+// import controlModule from '@/game/core/controlModule';
 import style from './game.module.scss';
 import Button from '@/app/components/common/button/button';
-
-const DEMO_ENEMIES_COUNT = 11; // TODO: автоматизировать процессы игры
 
 const Game: FC = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -27,13 +25,17 @@ const Game: FC = () => {
 
     const [paused, setIsPaused] = useState(false);
     const [counter, setCounter] = useState(0);
-    const { gameState: state, score } = useSelector((rootState: RootState) => rootState.game);
+    const { gameState: state } = useSelector((rootState: RootState) => rootState.game);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let shootInterval: ReturnType<typeof setInterval> | null = null;
     let component;
 
-    /* const onKeyDown = (event: KeyboardEvent) => {
-        GameEngine.getInstance().gameControlPressed(event);
-    }; */
+    console.log('in game.tsx');
+    console.log('gameState is loading', state === GlobalGameState.LevelLoading);
+    console.log('gameState is started', state === GlobalGameState.LevelStarted);
+    console.log(state);
+
+    const onKeyDown = (event: KeyboardEvent) => gameEngineRef.current?.gameControlPressed(event);
 
     const startGame = () => {
         // gameEngineRef.current?.setGameState(GlobalGameState.LevelLoading);
@@ -57,39 +59,40 @@ const Game: FC = () => {
         }
     };
 
-    const resumeGame = () => {
-        gameEngineRef.current?.setGameState(GlobalGameState.Resumed);
-        setIsPaused(false);
-    };
+    // pause game is active if game started
 
-    const handleMouseMove = (ev: SyntheticEvent) => {
-        if (GameEngine.isGameRunning()) {
+    // TODO: remove if keyboard control will be used
+    /* const handleMouseMove = (ev: SyntheticEvent) => {
+        // console.log('handleMouseMove');
+        if (gameEngineRef.current?.isGameRunning()) {
             return;
         }
+        console.log('handleMouseMove2');
         const mouseX =
             (ev.nativeEvent as MouseEvent).clientX - (ev.target as HTMLElement).offsetLeft;
         const mouseY =
             (ev.nativeEvent as MouseEvent).clientY - (ev.target as HTMLElement).offsetTop;
 
         controlModule.setTargetedCoordinatesForPlayer({ x: mouseX, y: mouseY });
-    };
+    }; */
 
     useEffect(() => {
-        if (state === GlobalGameState.LevelStarted || state === GlobalGameState.Resumed) {
-            // window.addEventListener('keydown', onKeyDown);
+        if (gameEngineRef.current?.isGameRunning()) {
+            window.addEventListener('keydown', onKeyDown);
             // TODO: move to game engine?
             shootInterval = setInterval(() => {
                 gameEngineRef.current?.playerShoot();
             }, 500);
         }
         return () => {
-            // window.removeEventListener('keydown', onKeyDown);
-            if (shootInterval) {
+            window.removeEventListener('keydown', onKeyDown);
+            /* if (shootInterval) {
                 clearInterval(shootInterval);
-            }
+            } */
         };
     }, [state]);
 
+    // this is engine logic!!!
     const increment = () => {
         setCounter(counter + 1);
     };
@@ -112,37 +115,35 @@ const Game: FC = () => {
         return () => window.removeEventListener(GAME_EVENTS.objectIsDead, increment);
     }, []);
 
+    const mainClass = classNames({ [style.default]: state === GlobalGameState.Loaded });
+
+    // <GameOver score={score} isWin={counter === DEMO_ENEMIES_COUNT} kills={counter} />
     if (state === GlobalGameState.Ended) {
-        component = (
-            <GameOver score={score} isWin={counter === DEMO_ENEMIES_COUNT} kills={counter} />
-        );
+        component = <GameOver />;
     } else if (state === GlobalGameState.LevelLoading) {
         component = <StartGame />;
     } else {
         component = (
-            <main className={classNames({ [style.default]: state === GlobalGameState.Loaded })}>
+            <main className={mainClass}>
                 <div className={style.game__canvasWrapper}>
                     <canvas
                         ref={canvasRef}
                         width={params.WIDTH}
                         height={params.HEIGHT}
-                        onMouseMove={handleMouseMove}
+                        // onMouseMove={handleMouseMove}
                         className={style.game__canvas}>
                         the game should be here
                     </canvas>
                 </div>
 
                 <div className={style.game__buttons}>
-                    {state === GlobalGameState.Loaded && (
-                        <Button text="Start game" size="medium" click={startGame} />
-                    )}
-                    {state === GlobalGameState.Paused && (
-                        <Button text="Resume game" size="medium" click={resumeGame} />
-                    )}
-                    {(state === GlobalGameState.LevelStarted ||
-                        state === GlobalGameState.Resumed) && (
-                        <Button text="Pause game" size="medium" click={pauseGame} />
-                    )}
+                    <Button text="Start game" size="medium" click={startGame} />
+                    <Button
+                        text={paused ? 'Resume game' : 'Pause game'}
+                        size="medium"
+                        click={pauseGame}
+                        // isActive={''}
+                    />
                 </div>
             </main>
         );
