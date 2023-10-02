@@ -1,10 +1,10 @@
+import { ShotType, TPoint } from '@game/types/commonTypes';
+import { ShotParametersValues } from '@game/parameters/gameObjectsParameters';
+import { ShotState } from '@game/store/objectState';
+import BaseObject from './base/baseObject';
 import Trajectory from './trajectory';
-import { ShotParametersValues } from '../parameters/gameObjectsParameters';
-import { ShotState } from '../store/objectState';
-import { ShotType, TPoint } from '../types/commonTypes';
-import DrawableGameObject from '../core/drawableGameObject';
 
-export default class GameShot extends DrawableGameObject {
+export default class GameShot extends BaseObject {
     private type: ShotType;
 
     constructor(type: ShotType, startPoint: TPoint, startTime: number) {
@@ -20,9 +20,11 @@ export default class GameShot extends DrawableGameObject {
 
     public isVisible = () => (this.getState() as ShotState).isVisible();
 
-    public isPlayerShot = () => +this.type === ShotType.Player;
+    private isPlayerShot = () => +this.type === ShotType.Player;
+
+    public shouldCheckCollision = () => this.isPlayerShot() && this.isVisible();
 
     public updateState = (time: number, shouldChangeFrame: boolean) => {
-        (this.getState() as ShotState).update(time, shouldChangeFrame, this.parameters.frameCount);
+        (this.getState() as ShotState).update(time, shouldChangeFrame, this.frameCount);
     };
 }

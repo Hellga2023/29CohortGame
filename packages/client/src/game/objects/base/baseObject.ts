@@ -1,8 +1,8 @@
-import Trajectory from '../objects/trajectory';
-import { TPoint } from '../types/commonTypes';
+import Trajectory from '../trajectory';
+import { TPoint } from '../../types/commonTypes';
 
 /* Common state for ships and shots */
-export class DrawableObjectState {
+export class BaseState {
     private coordinates: TPoint;
 
     protected frameIndex = 0;
@@ -31,7 +31,7 @@ export class DrawableObjectState {
 }
 
 /* Common parameters type for ships and shots */
-export class DrawableObjectParams {
+export class BaseParams {
     public width: number;
 
     public height: number;
@@ -48,25 +48,27 @@ export class DrawableObjectParams {
     }
 }
 
-/* Common object that can be drawn */
-export default class DrawableGameObject {
-    public image = new Image();
+/* Base object that can be drawn by Painter */
+export default class BaseObject {
+    public readonly image = new Image();
 
-    protected state: DrawableObjectState;
+    public readonly width: number;
 
-    protected parameters: DrawableObjectParams;
+    public readonly height: number;
 
-    constructor(state: DrawableObjectState, parameters: DrawableObjectParams) {
+    public readonly frameCount: number;
+
+    protected readonly state: BaseState;
+
+    constructor(state: BaseState, parameters: BaseParams) {
         this.state = state;
-        this.parameters = parameters;
+        this.width = parameters.width;
+        this.height = parameters.height;
+        this.frameCount = parameters.frameCount;
         this.image.src = parameters.image;
     }
 
-    public getState(): DrawableObjectState {
+    public getState(): BaseState {
         return this.state;
-    }
-
-    public getParameters(): DrawableObjectParams {
-        return this.parameters;
     }
 }

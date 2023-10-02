@@ -1,6 +1,6 @@
 import { TPoint } from '../types/commonTypes';
 import Trajectory from '../objects/trajectory';
-import { DrawableObjectState } from '../core/drawableGameObject';
+import { BaseState } from '../objects/base/baseObject';
 
 export enum GlobalGameState {
     Loaded,
@@ -18,9 +18,11 @@ export enum LiveState {
     Flying,
     Shooting,
     Exploiding,
+    FliedAway, // todo separate dead and fliedAway states
     Dead,
 }
 
+// TODO: remove? store changed -> all reducers are called
 export const GAME_EVENTS = {
     objectIsDead: 'objectIsDead',
 };
@@ -29,7 +31,7 @@ export const EVENTS = {
     [GAME_EVENTS.objectIsDead]: new Event(GAME_EVENTS.objectIsDead),
 };
 
-export class ShipState extends DrawableObjectState {
+export class ShipState extends BaseState {
     private liveState: LiveState;
 
     constructor(coordinates: TPoint, trajectory: Trajectory, liveState: LiveState) {
@@ -55,13 +57,15 @@ export class ShipState extends DrawableObjectState {
     };
 
     // 2 action change index and set dead
-    public changeFrameIndex = (frameCount: number, shouldChangeFrame: boolean) => {
+    public changeFrameIndex = (shouldChangeFrame: boolean) => {
         if (this.isExploiding() && shouldChangeFrame) {
             this.frameIndex++;
+        }
+    };
 
-            if (this.frameIndex >= frameCount) {
-                this.setLiveState(LiveState.Dead);
-            }
+    public setDead = (frameCount: number) => {
+        if (this.frameIndex >= frameCount) {
+            this.setLiveState(LiveState.Dead);
         }
     };
 
@@ -73,14 +77,16 @@ export class ShipState extends DrawableObjectState {
             this.setLiveState(LiveState.Flying);
         } else if (!this.isDead() && this.trajectory.movedOutOfGameField(time)) {
             // if ship flied out of canvas set state to Dead
-            this.setLiveState(LiveState.Dead);
+            this.setLiveState(LiveState.FliedAway);
         }
 
-        this.changeFrameIndex(frameCount, shouldChangeFrame);
+        this.changeFrameIndex(shouldChangeFrame);
+
+        this.setDead(frameCount);
     };
 }
 
-export class ShotState extends DrawableObjectState {
+export class ShotState extends BaseState {
     private show: boolean;
 
     private startTime: number;

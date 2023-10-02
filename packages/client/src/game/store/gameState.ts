@@ -3,7 +3,6 @@ import params, { NEXT_SHIP_DELAY } from '../parameters/gameParameters';
 import { TEnemyType } from '../types/commonTypes';
 import GameLevels, { GameLevelList } from '../parameters/gameLevels';
 import Trajectory from '../objects/trajectory';
-import { GlobalGameState } from './objectState';
 import EnemyShip from '../objects/ships/enemyShip';
 import GameShot from '../objects/gameShot';
 
@@ -16,14 +15,9 @@ class GameState {
 
     private currentLevel: GameLevelList;
 
-    private state: GlobalGameState;
-
-    public isGameRunning = false;
-
     constructor() {
         this.currentLevel = GameLevelList.Level1;
         this.player = this.initPlayer();
-        this.state = GlobalGameState.Loaded;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -60,13 +54,11 @@ class GameState {
         this.shots = [];
     };
 
-    public setState = (state: GlobalGameState) => {
+    /* public setState = (state: GlobalGameState) => {
         this.state = state;
-        this.isGameRunning =
-            this.state === GlobalGameState.LevelStarted || this.state === GlobalGameState.Resumed;
     };
 
-    public getState = () => this.state;
+    public getState = () => this.state; */
 }
 
 export default new GameState();

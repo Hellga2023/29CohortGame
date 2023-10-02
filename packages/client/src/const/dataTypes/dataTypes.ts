@@ -15,11 +15,11 @@ export type AuthUserData = {
     password: string;
 };
 
-export type TGameScore = {
+/* export type TGameScore = {
     score: number;
     isWin?: boolean;
     kills?: number;
     timeInSeconds?: number;
-};
+}; */
 
 export default TUser;

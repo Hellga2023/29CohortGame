@@ -1,6 +1,6 @@
-import Trajectory from '../trajectory';
-import { LiveState, ShipState } from '../../store/objectState';
-import { ShipType } from '../../types/commonTypes';
+import Trajectory from '@game/objects/trajectory';
+import { LiveState, ShipState } from '@game/store/objectState';
+import { ShipType } from '@game/types/commonTypes';
 import GameShip from './gameShip';
 
 export default class EnemyShip extends GameShip {
@@ -10,7 +10,7 @@ export default class EnemyShip extends GameShip {
     }
 
     public updateState = (time: number, shouldChangeFrame: boolean) => {
-        this.getShipState().updateEnemyState(time, this.parameters.frameCount, shouldChangeFrame);
+        this.getShipState().updateEnemyState(time, this.frameCount, shouldChangeFrame);
     };
 
     public isWaiting = () => this.getShipState().isWaiting();
